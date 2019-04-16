@@ -1,9 +1,9 @@
 <?php
 
-namespace zerg\core;
+namespace proton\core;
 
 class Loader{
-	const PREFIX = 'zerg\\';
+	const PREFIX = 'proton\\';
 	protected $prefixes = array();
 
 	public function register(){

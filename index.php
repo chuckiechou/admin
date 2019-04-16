@@ -5,7 +5,7 @@ define('APP_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
 require './core/Loader.php';
 
-$loader = new \zerg\core\Loader();
+$loader = new \proton\core\Loader();
 $loader->register();
 
-$app = \zerg\core\App::run();
+$app = \proton\core\App::run();

@@ -1,8 +1,8 @@
 <?php
 
-namespace zerg\core;
+namespace proton\core;
 
 
-class AppException{
+class AppException extends \Exception{
 
 }
