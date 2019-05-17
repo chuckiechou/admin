@@ -8,4 +8,4 @@ require './core/Loader.php';
 $loader = new \proton\core\Loader();
 $loader->register();
 
-$app = \proton\core\App::run();
+$app = \proton\core\App::run(APP_PATH, APP_ENV);
