@@ -55,7 +55,6 @@ class Config{
 	public function loadConfig($name, $env = false){
 		self::$config[$name] = array();
 		$files = (array)$this->getFile($name, $env);
-		print_r($files);
 		if ($files) {
 			foreach ($files as $file) {
 				$overwrites = (array)@include($file);
