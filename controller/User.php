@@ -1,8 +1,14 @@
 <?php
 
 namespace proton\controller;
+
+use proton\lib\MyPDO;
+
 class User{
 	public function index(){
-		echo 1111;
+		$db = config('@core', 'db.main');
+		$result = new MyPDO($db);
+		$sql = "select * from user limit 1";
+		print_r($result->getOne($sql));
 	}
 }
