@@ -2,6 +2,9 @@
 
 namespace proton\lib;
 
+use proton\core\App;
+use proton\core\Log;
+
 class MyPDO{
 	private $pdo; // pdo对象
 	private $pdoStat; //PDOStatement对象
@@ -235,10 +238,12 @@ class MyPDO{
 			$exception .= '#' . $i . ' ' . $one['file'] . '(' . $one['line'] . '): ' . $one['class'] . $one['type'] . $one['function'] . '(' . $args . ')' . "\r\n";
 			$i++;
 		}
-//		fc::debug($exception . "\n", 'mysqlerr.txt');
-//		$sql && fc::debug($sql . "\n", 'mysql_query.txt');
-//		if ($die) fc::response(-1022, "mysql err!", null, true);
 
+		App::$log->add(Log::ERROR, $exception);
+		if ($die) {
+			if ($this->pdo) $message = json_encode($this->pdo->errorInfo());
+			trigger_error("Query: {$sql} // #" . $message, E_USER_ERROR);
+		}
 		return false;
 	}
 

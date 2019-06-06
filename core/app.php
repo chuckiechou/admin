@@ -2,7 +2,6 @@
 
 namespace proton\core;
 
-
 class App{
 	public static $path;
 	public static $env;
@@ -13,22 +12,25 @@ class App{
 		//初始化变量
 		self::$path = $path;
 		self::$env = $env;
-
 		self::_requireFiles();
 		try {
+			self::$log = Log::instance();
+			self::$log->attach(new Logger(self::$path . 'data/log/'), Log::STRACE);
+			self::$log->attach(new Logger(self::$path . 'data/debug/'), array(Log::DEBUG));
+			AppException::register();
 			self::_dispatch();
 			$controller = "\\proton\\controller\\" . self::$action[0] . "";
 			if (class_exists($controller) && method_exists($controller, self::$action[1])) {
-				$ret = call_user_func(array($controller, self::$action[1]));
+				$ret = call_user_func(array(new $controller, self::$action[1]));
 			} else {
 				throw new \Exception('Controller is not Found');
 			}
 		} catch (\Exception $e) {
-			print_r($e->getMessage());
-		}
-
-		if ($ret) {
-
+			$code = $e->getCode();
+			if (self::$log && $code !== null) {
+				//self::$log->add(LOG_ERR, $e->getMessage()." \r\nTrace:".$e->getTraceAsString());
+				AppException::exceptionHandler($e);
+			}
 		}
 	}
 
