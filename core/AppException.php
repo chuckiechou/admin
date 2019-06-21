@@ -74,8 +74,6 @@ class AppException extends \Exception{
 	}
 
 	public static function register(){
-		error_reporting(E_ALL);
-		ini_set('display_errors', 'On');
 		set_error_handler([__CLASS__, 'errorHandler']);
 		set_exception_handler([__CLASS__, 'exceptionHandler']);
 		register_shutdown_function([__CLASS__, 'shutdownHandler']);

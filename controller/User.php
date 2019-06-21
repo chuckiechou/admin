@@ -3,6 +3,7 @@
 namespace proton\controller;
 
 use proton\lib\MyPDO;
+use proton\lib\Request;
 
 class User{
 	public function index(){
@@ -10,6 +11,7 @@ class User{
 		$result = new MyPDO($db);
 		$sql = "select * from user limit 1";
 		print_r($result->getOne($sql));*/
-		echo 555;
+		$res = (Request::getInstance())->get('action');
+		print_r($res);
 	}
 }

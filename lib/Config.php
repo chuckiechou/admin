@@ -48,7 +48,6 @@ class Config{
 		if (file_exists($file)) {
 			$files[] = $file;
 		}
-
 		return $files;
 	}
 

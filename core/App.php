@@ -2,6 +2,8 @@
 
 namespace proton\core;
 
+use proton\lib\Request;
+
 class App{
 	public static $path;
 	public static $env;
@@ -18,8 +20,9 @@ class App{
 			self::$log->attach(new Logger(self::$path . 'data/log/'), Log::STRACE);
 			self::$log->attach(new Logger(self::$path . 'data/debug/'), array(Log::DEBUG));
 			AppException::register();
+			self::magic_quote();
 			self::_dispatch();
-			$controller = "\\proton\\controller\\" . self::$action[0] . "";
+			$controller = "\\proton\\controller\\" . self::$action[0];
 			if (class_exists($controller) && method_exists($controller, self::$action[1])) {
 				$ret = call_user_func(array(new $controller, self::$action[1]));
 			} else {
@@ -34,6 +37,27 @@ class App{
 		}
 	}
 
+	protected static function magic_quote(){
+		//WEB模式下对自动转义的变量取消转义
+		if (get_magic_quotes_gpc() && PHP_SAPI != 'cli') {
+			if (!empty($_GET)) {
+				foreach ($_GET as &$v) {
+					$v = unesc($v);
+				}
+			}
+			if (!empty($_POST)) {
+				foreach ($_POST as &$v) {
+					$v = unesc($v);
+				}
+			}
+			if (!empty($_COOKIE)) {
+				foreach ($_COOKIE as &$v) {
+					$v = unesc($v);
+				}
+			}
+		}
+	}
+
 	public static function cli(){
 
 	}
@@ -43,8 +67,9 @@ class App{
 	}
 
 	protected static function _dispatch(){
-		$ret = isset($_REQUEST['fc']) ? explode('.', $_REQUEST['fc'], 2) : array();
-		$ret[0] = isset($ret[0]) ? preg_replace('/\W/', '', $ret[0]) : 'index';
+		$action = Request::getInstance()->params('action');
+		$ret = (isset($action) && $action) ? explode('.', $action, 2) : array();
+		$ret[0] = isset($ret[0]) ? preg_replace('/\W/', '', $ret[0]) : 'Index';
 		$ret[1] = isset($ret[1]) ? preg_replace('/\W/', '', $ret[1]) : 'index';
 		self::$action = array($ret[0], $ret[1]);
 	}
