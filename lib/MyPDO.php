@@ -16,7 +16,7 @@ class MyPDO{
 
 	// mysql 的wait_timeout 时间为28800（8个小时）
 	// cli 模式下4个小时强制重连一次mysql
-	private $cli_rtime = 3600 * 4;
+	private $cli_rtime = 14400;
 
 	//兼容老的代码
 	public $database_name;
