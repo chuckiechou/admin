@@ -5,6 +5,6 @@ namespace proton\controller;
 
 class Index{
 	public function index(){
-		echo 'hello world';
+		return array('user' => 111);
 	}
 }

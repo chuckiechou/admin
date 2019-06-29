@@ -2,7 +2,12 @@
 
 namespace proton\core;
 
+use proton\lib\Error;
+use proton\lib\exception\HttpException;
 use proton\lib\Request;
+use proton\lib\Response;
+use Exception;
+use proton\lib\exception\HttpResponseException;
 
 class App{
 	public static $path;
@@ -15,26 +20,51 @@ class App{
 		self::$path = $path;
 		self::$env = $env;
 		self::_requireFiles();
+		$request = Request::getInstance();
+		error_reporting(E_ALL);
+		ini_set('display_errors','On');
 		try {
 			self::$log = Log::instance();
 			self::$log->attach(new Logger(self::$path . 'data/log/'), Log::STRACE);
 			self::$log->attach(new Logger(self::$path . 'data/debug/'), array(Log::DEBUG));
-			AppException::register();
+			Error::register();
 			self::magic_quote();
 			self::_dispatch();
 			$controller = "\\proton\\controller\\" . self::$action[0];
 			if (class_exists($controller) && method_exists($controller, self::$action[1])) {
-				$ret = call_user_func(array(new $controller, self::$action[1]));
+				$data = call_user_func(array(new $controller, self::$action[1]));
 			} else {
-				throw new \Exception('Controller is not Found');
+				throw new HttpException('Controller is not Found');
+//				throw new Exception('Controller is not Found');
 			}
+
+		} catch (HttpResponseException $exception) {
+			$data = $exception->getResponse();
 		} catch (\Exception $e) {
 			$code = $e->getCode();
 			if (self::$log && $code !== null) {
-				//self::$log->add(LOG_ERR, $e->getMessage()." \r\nTrace:".$e->getTraceAsString());
-				AppException::exceptionHandler($e);
+				Error::exceptionHandler($e);
 			}
 		}
+		// 输出数据到客户端
+		if ($data instanceof Response) {
+			$response = $data;
+		} elseif (isset($data) && !is_null($data)) {
+			// 默认自动识别响应输出类型
+			$type = $request->ajax() ? 'json' : 'html';
+			$type = 'json';
+			$response = Response::create($data, $type);
+		} else {
+			$response = Response::create();
+		}
+		$response->send();
+	}
+
+	/**
+	 * 初始化配置
+	 */
+	public static function initCommon(){
+
 	}
 
 	protected static function magic_quote(){

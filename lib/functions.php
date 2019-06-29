@@ -1,4 +1,7 @@
 <?php
+
+use proton\lib\Response;
+
 function config($section, $key){
 	return \proton\lib\Config::getInstance()->get($section, $key);
 }
@@ -26,4 +29,18 @@ function unesc($val){
 		$val = stripslashes($val);
 	}
 	return $val;
+}
+
+if (!function_exists('json')) {
+	/**
+	 * 获取\think\response\Json对象实例
+	 * @param mixed $data 返回的数据
+	 * @param integer $code 状态码
+	 * @param array $header 头部
+	 * @param array $options 参数
+	 * @return \think\response\Json
+	 */
+	function json($data = [], $code = 200, $header = [], $options = []){
+		return Response::create($data, 'json', $code, $header, $options);
+	}
 }
