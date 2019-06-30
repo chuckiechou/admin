@@ -30,7 +30,7 @@ class Handle
         E_RECOVERABLE_ERROR
     );
 
-    public function report(AppException $e)
+    public function report($e)
     {
         $file = $e->getFile();
         $line = $e->getline();
