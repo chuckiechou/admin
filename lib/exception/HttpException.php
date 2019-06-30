@@ -3,7 +3,9 @@
 namespace proton\lib\exception;
 
 
-class HttpException extends \Exception{
+use proton\lib\AppException;
+
+class HttpException extends AppException {
 	private $statusCode;
 	private $headers;
 
