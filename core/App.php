@@ -29,7 +29,6 @@ class App
             self::$log->attach(new Logger(self::$path . 'data/debug/'), array(Log::DEBUG));
             Error::register();
             self::magic_quote();
-
             self::_dispatch();
             $controller = "\\proton\\controller\\" . self::$action[0];
             if (class_exists($controller) && method_exists($controller, self::$action[1])) {
@@ -37,7 +36,6 @@ class App
             } else {
                 throw new RouteNotFoundException();
             }
-
         } catch (HttpResponseException $exception) {
             $data = $exception->getResponse();
         } catch (\Exception $e) {
@@ -59,9 +57,7 @@ class App
      * 初始化配置
      */
     public static function initCommon()
-    {
-
-    }
+    { }
 
     protected static function magic_quote()
     {
@@ -86,9 +82,7 @@ class App
     }
 
     public static function cli()
-    {
-
-    }
+    { }
 
     protected static function _requireFiles()
     {

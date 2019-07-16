@@ -65,7 +65,6 @@ class Response{
 	public function send(){
 		// 处理输出数据
 		$data = $this->getContent();
-
 		if (!headers_sent() && !empty($this->header)) {
 			// 发送状态码
 			http_response_code($this->code);
