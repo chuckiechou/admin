@@ -20,8 +20,8 @@ class Factory{
 				$smarty->cache_lifetime = 1000;
 				$smarty->left_delimiter = '<*'; //开始符
 				$smarty->right_delimiter = '*>'; //结束符
-				$smarty->force_compile = App::$env == 'product' ? true : false; //强制重编译,上线后改为false
-				$smarty->compile_check = App::$env == 'product' ? false : false; //检查模板改动,上线后改为false
+				$smarty->force_compile = App::$env == 'product' ? false : true; //强制重编译,上线后改为false
+				$smarty->compile_check = App::$env == 'product' ? false : true; //检查模板改动,上线后改为false
 				$smarty->setTemplateDir(App::$path . 'views/templates')->setCompileDir(App::$path . 'views/templates_c')->setCacheDir($cache_dir);
 				$smarty->debugging = false; //打开调试
 				$smarty->debugging_ctrl = 'URL'; //调试方法

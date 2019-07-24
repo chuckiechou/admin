@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 62361
- * Date: 2019/6/30
- * Time: 12:18
- */
 
 namespace proton\lib\response;
 

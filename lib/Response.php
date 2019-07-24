@@ -2,6 +2,8 @@
 
 namespace proton\lib;
 
+use proton\lib\response\Json as JsonResponse;
+use proton\lib\response\View as ViewResponse;
 
 class Response{
 	// 原始数据
@@ -41,7 +43,7 @@ class Response{
 	 * @param int $code
 	 * @param array $header
 	 * @param array $options 输出参数
-	 * @return Response|JsonResponse|ViewResponse|XmlResponse|RedirectResponse|JsonpResponse
+	 * @return Response|JsonResponse|ViewResponse
 	 */
 	public static function create($data = '', $type = '', $code = 200, array $header = [], $options = []){
 		$type = empty($type) ? 'null' : strtolower($type);

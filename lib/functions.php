@@ -43,10 +43,10 @@ if (!function_exists('json')) {
      * @param array $options 参数
      * @return \proton\lib\response\Json
      */
-    function json($data = [], $code = 200, $header = [], $options = [])
-    {
-        return Response::create($data, 'json', $code, $header, $options);
-    }
+	function json($data = [], $code = 200, $header = [], $options = [])
+	{
+		return Response::create($data, 'json', $code, $header, $options);
+	}
 }
 
 if (!function_exists('view')) {
