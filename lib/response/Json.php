@@ -36,4 +36,8 @@ class Json extends Response{
 			throw $e;
 		}
 	}
+
+	public function send(){
+		parent::send();
+	}
 }

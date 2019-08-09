@@ -2,9 +2,8 @@
 
 namespace proton\lib;
 
-
-use proton\lib\exception\ErrorException;
-use proton\lib\exception\JsonExceptionHandler;
+use proton\core\App;
+use proton\core\Log;
 
 class Error
 {
@@ -40,36 +39,38 @@ class Error
         register_shutdown_function([__CLASS__, 'appShutdown']);
     }
 
-    /**
-     * Exception Handler
-     * @param  \Exception|\Throwable $e
-     */
+	/**
+	 * @param $e
+	 */
     public static function appException($e)
     {
-//        if (!$e instanceof \Exception) {
-//            $e = new ThrowableError($e);
-//        }
-        self::getExceptionHandler()->report($e);
-        self::getExceptionHandler()->render($e)->send();
+		$file = $e->getFile();
+		$line = $e->getline();
+		$code = $e->getCode();
+		$message = $e->getMessage();
+
+		if (!in_array($code, self::$ignoreErrors)) {
+			//记录或输出异常信息
+			if (App::$log != null) {
+				Log::$writeOnAdd = true;
+				App::$log->add(LOG_ERR, sprintf("[%s.%s@%s#%d] (%d) %s", App::$action[0], App::$action[1], $file, $line, $code, $message));
+			}
+		}
+		//报错页面，json或者view
+		echo  json_encode(['222']);
     }
 
-    /**
-     * Error Handler
-     * @param  integer $errno 错误编号
-     * @param  integer $errstr 详细错误信息
-     * @param  string $errfile 出错的文件
-     * @param  integer $errline 出错行号
-     * @param array $errcontext
-     * @throws ErrorException
-     */
-    public static function appError($errno, $errstr, $errfile = '', $errline = 0, $errcontext = [])
+	/**
+	 * @param $code
+	 * @param $error
+	 * @param null $file
+	 * @param null $line
+	 * @return bool
+	 */
+    public static function appError($code, $error, $file = null, $line = null)
     {
-        $exception = new ErrorException($errno, $errstr, $errfile, $errline, $errcontext);
-        if (error_reporting() & $errno) {
-            throw $exception;
-        } else {
-            self::getExceptionHandler()->report($exception);
-        }
+		self::appException(new \ErrorException($error, $code, 0, $file, $line));
+		return !in_array($code, self::$fatalErrors);
     }
 
     /**
@@ -77,12 +78,10 @@ class Error
      */
     public static function appShutdown()
     {
-        if (!is_null($error = error_get_last()) && self::isFatal($error['type'])) {
-            // 将错误信息托管至think\ErrorException
-            $exception = new ErrorException($error['type'], $error['message'], $error['file'], $error['line']);
-
-            self::appException($exception);
-        }
+		$error = error_get_last();
+		if ($error) {
+			self::appException(new \ErrorException($error['message'], $error['type'], 0, $error['file'], $error['line']));
+		}
     }
 
     /**
@@ -94,10 +93,5 @@ class Error
     protected static function isFatal($type)
     {
         return in_array($type, [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE]);
-    }
-
-    public static function getExceptionHandler()
-    {
-        return new JsonExceptionHandler();
     }
 }

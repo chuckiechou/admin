@@ -2,6 +2,7 @@
 
 namespace proton\lib;
 
+use proton\core\App;
 use proton\lib\response\Json as JsonResponse;
 use proton\lib\response\View as ViewResponse;
 
@@ -200,5 +201,18 @@ class Response{
 	 */
 	public function getData(){
 		return $this->data;
+	}
+
+	public function loadView($name, $vars = array()){
+		$prefix = App::$path;
+		$file = "{$prefix}views/templates/{$name}.php";
+		if (file_exists($file)) {
+			if ($vars) {
+				extract($vars);
+			}
+			@include($file);
+		} else {
+			throw new AppException("template {$name} is not found");
+		}
 	}
 }
